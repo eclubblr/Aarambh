@@ -1287,7 +1287,9 @@ nav.primary.active a {
   inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
+  object-position: center;
+  background: #000;
   border-radius: 16px
 }
 
@@ -1380,8 +1382,10 @@ nav.primary.active a {
 
 .event-photo {
   width: 100%;
-  height: 160px;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+  background: #000;
   border-radius: 12px;
   margin-top: 0;
   border: 1px solid rgba(255, 255, 255, 0.04);
@@ -1439,12 +1443,12 @@ nav.primary.active a {
 /* responsive card sizing */
 @media (max-width:1000px) {
   .event-card {
-    min-height: 360px;
+    min-height: clamp(280px, 36vw, 380px);
     padding: 0
   }
 
   .card-inner {
-    min-height: 300px
+    min-height: clamp(260px, 34vw, 360px)
   }
 }
 
@@ -1498,22 +1502,22 @@ nav.primary.active a {
 
 @media (max-width:700px) {
   .event-card {
-    min-height: 260px;
+    min-height: clamp(220px, 70vw, 320px);
     padding: 0;
     border-radius: 12px
   }
 
   .card-inner {
-    min-height: 220px
+    min-height: clamp(200px, 68vw, 300px)
   }
 
   .card-front,
   .card-back {
-    padding: 16px
+    padding: 12px
   }
 
   .event-photo {
-    height: 140px
+    height: clamp(120px, 40vw, 200px)
   }
 
   .btn-outline-sm {
@@ -1530,7 +1534,7 @@ nav.primary.active a {
   }
 
   .card-back .event-description {
-    max-height: 180px;
+    max-height: clamp(100px, 28vw, 180px);
     overflow: auto;
     text-align: left
   }
@@ -1630,7 +1634,7 @@ nav.primary.active a {
 
 @media (max-width:700px) {
   .event-card.full-photo {
-    min-height: 220px
+    min-height: clamp(200px, 65vw, 320px)
   }
 
   .event-card.full-photo .photo-caption {
@@ -1638,8 +1642,8 @@ nav.primary.active a {
   }
 
   .event-card.full-photo .event-title {
-    font-size: 16px;
-    padding: 12px 10px
+    font-size: clamp(13px, 4vw, 17px);
+    padding: 10px 10px
   }
 }
 
@@ -2440,7 +2444,7 @@ footer.sitefoot {
     display: flex;
     transform-style: preserve-3d;
     transition: transform 0.6s cubic-bezier(0.2, 0.9, 0.2, 1);
-    min-height: 400px;
+    min-height: clamp(280px, 82vw, 440px);
   }
 
   .card-front,
@@ -2479,8 +2483,8 @@ footer.sitefoot {
     cursor: pointer;
     padding: 0;
     border-radius: 16px;
-    min-height: 400px;
-    overflow: visible;
+    min-height: clamp(280px, 82vw, 440px);
+    overflow: hidden;
     perspective: 1000px;
     -webkit-tap-highlight-color: transparent;
     gap: 0;
@@ -2489,7 +2493,9 @@ footer.sitefoot {
   .event-card .event-photo {
     height: 100%;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
+    object-position: center;
+    background: #000;
     border-radius: 16px;
     position: absolute;
     inset: 0;

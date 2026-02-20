@@ -31,9 +31,9 @@
 
 		.loader-text {
 			font-family: 'Cinzel', serif;
-			font-size: 4rem;
+			font-size: clamp(2.5rem, 8vw, 4rem);
 			font-weight: 700;
-			letter-spacing: 0.5rem;
+			letter-spacing: clamp(0.2rem, 1vw, 0.5rem);
 			color: transparent;
 			background: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
 			-webkit-background-clip: text;
@@ -133,9 +133,9 @@
 		<nav class="primary" aria-label="Main navigation" id="navMenu">
 			<a href="#home">Home</a>
 			<a href="#events">Events</a>
-			<a href="#sponsors">Sponsors</a>
+			<!--<a href="#sponsors">Sponsors</a>-->
 			<a href="#speakers">Speakers</a>
-			<a href="#contact">Contact</a>
+			<a href="#Contact">Contact</a>
 			<!--
 			<div class="actions">
 				<button class="btn ghost" aria-label="Login">Login</button><br></br>
@@ -560,8 +560,12 @@
 		<section class="section about" id="about">
 			<div class="text">
 				<h3 class="section-title">About AARAMBH</h3>
-				<p>AARAMBH is the flagship entrepreneurship and innovation event organised by the E-Club of GITAM Bengaluru. It is a celebration of startups, technology, design, and creative problem solving, dedicated to students, faculty, founders, and innovators who want to build, pitch, and collaborate.</p>
-				<p>The event includes workshops, pitch competitions, speaker sessions, and hands-on problem-solving activities that foster entrepreneurship and real-world product thinking.</p>
+				<p>AARAMBH is the flagship entrepreneurship and innovation event organised by the E-Club of GITAM
+					Bengaluru. It is a celebration of startups, technology, design, and creative problem solving,
+					dedicated to students, faculty, founders, and innovators who want to build, pitch, and collaborate.
+				</p>
+				<p>The event includes workshops, pitch competitions, speaker sessions, and hands-on problem-solving
+					activities that foster entrepreneurship and real-world product thinking.</p>
 			</div>
 			<!-- Target container for 3D model to align with -->
 			<div id="about-3d-target" class="aside"></div>
@@ -636,7 +640,7 @@
 			<h3 class="section-title">Aarambh Overview Through the Year</h3>
 			<div class="stats-grid">
 				<div class="stat-block">
-					<div class="heading" data-to="12000" data-suffix="+">12000+</div>
+					<div class="heading" data-to="8000" data-suffix="+">8000+</div>
 					<div class="text">
 						ATTENDEES
 					</div>
@@ -673,9 +677,9 @@
 
 						</div>
 						<div class="card-back">
-							<p class="event-description">Department-wise Idea Pitching. A platform for students (CSE,
-								Core, Management, Science) and Faculty to pitch innovative solutions. Themes include
-								Smart Cities, AI for Good, MedTech, and more.
+							<p class="event-description">Department-wise Idea Pitching Competition. A platform for
+								students and faculty members from all Schools (CSE,
+								CORE,GSB,GSS,GSHSS) and to pitch innovative solutions for respective themes.
 							</p>
 							<div class="event-actions"><a class="btn cta" href="event-pitch-tank.html">Register</a>
 								<a class="btn-outline-sm" href="event-pitch-tank.html" target="_blank"
@@ -692,12 +696,10 @@
 
 						</div>
 						<div class="card-back">
-							<!-- TODO: Update Description for Battle of Brains -->
-							<p class="event-description">A time-bound innovation challenge. Teams analysis a surprise
-								problem statement, identify the root cause, and pitch a practical solution—all within 3
-								hours. Think fast, solve faster.
+							<p class="event-description">A structured competition where students gather to solve
+								problems, present ideas, and demonstrate their analytical skills within a limited time.
 							</p>
-							<div class="event-actions"><a class="btn cta" href="https://forms.gle/8Yv47oHPY6i3s8LE9"
+							<div class="event-actions"><a class="btn cta" href="event-battle-of-brains.html"
 									target="_blank">Register</a><a class="btn-outline-sm"
 									href="event-battle-of-brains.html" target="_blank" rel="noopener">More Info.</a>
 							</div>
@@ -712,12 +714,10 @@
 
 						</div>
 						<div class="card-back">
-							<!-- TODO: Update Description for Innovation In House -->
-							<p class="event-description">A showcase of innovation. Students present academic projects
-								(Minor, Major, TEPE), prototypes, and research work to faculty and experts. Categories
-								include Student Projects, Faculty Research, and Open Innovation.
+							<p class="event-description">This event showcases innovative ideas, creative projects, and
+								research by students and faculty members on one common platform.
 							</p>
-							<div class="event-actions"><a class="btn cta" href="https://forms.gle/ATQQTX9kHBaH7u9x6"
+							<div class="event-actions"><a class="btn cta" href="event-innovation-in-house.html"
 									target="_blank">Register</a>
 								<a class="btn-outline-sm" href="event-innovation-in-house.html" target="_blank"
 									rel="noopener">More Info.</a>
@@ -733,12 +733,9 @@
 
 						</div>
 						<div class="card-back">
-							<!-- TODO: Update Description for Leaders In Origin -->
-							<p class="event-description">"Leadership is defined by decisions." A solo leadership
-								simulation testing critical thinking, ethics, and decision-making under pressure. Solve
-								complex scenarios and prove your mettle.
-							</p>
-							<div class="event-actions"><a class="btn cta" href="https://forms.gle/q5bo7LNmtXhLZXjCA"
+							<p class="event-description">Participants face original, high-stakes leadership scenarios
+								that challenge judgment, decision-making, and responsibility.
+							<div class="event-actions"><a class="btn cta" href="event-leaders-in-origin.html"
 									target="_blank">Register</a>
 								<a class="btn-outline-sm" href="event-leaders-in-origin.html" target="_blank"
 									rel="noopener">More Info.</a>
@@ -972,14 +969,15 @@
 
 	</main>
 	<!-- FOOTER -->
-	<footer class="sitefoot">
+	<footer class="sitefoot" id="Contact">
 		<div class="footer-content">
 			<div class="footer-section footer-brand">
 				<div class="footer-logo">E</div>
 				<div>
 					<h4>THE ENTREPRENEUR'S CLUB</h4>
 					<p class="footer-subtitle">GITAM Bengaluru</p>
-					<p class="footer-desc">Unleash Your Enterpreneurial Spirit<br><br>E-Club is a student-driven club promoting the entrepreneurship ecosystem on campus.</p>
+					<p class="footer-desc">Unleash Your Enterpreneurial Spirit<br><br>E-Club is a student-driven club
+						promoting the entrepreneurship ecosystem on campus.</p>
 				</div>
 			</div>
 
@@ -1017,7 +1015,7 @@
 		</div>
 
 		<div class="footer-bottom">
-			<p>© 2026 AARAMBH, E-Club GITAM Bengaluru. All rights reserved.</p>
+			<p>© 2026 AARAMBH, E-Club GITAM Bengaluru. All rights reserved. Developed by E-Club Team</p>
 		</div>
 	</footer>
 

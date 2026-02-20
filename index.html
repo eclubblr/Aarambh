@@ -1,0 +1,1032 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<title>AARAMBH — E-Club, GITAM Bengaluru</title>
+	<meta name="description" content="AARAMBH — Entrepreneurship & Innovation Fest by E-Club, GITAM Bengaluru" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+	<link rel="stylesheet" href="Aarambh.css">
+	<style>
+		/* Preloader Styles */
+		#loader {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background-color: #000;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			z-index: 9999;
+			transition: opacity 1s ease-out, visibility 1s;
+		}
+
+		.loader-content {
+			text-align: center;
+		}
+
+		.loader-text {
+			font-family: 'Cinzel', serif;
+			font-size: 4rem;
+			font-weight: 700;
+			letter-spacing: 0.5rem;
+			color: transparent;
+			background: linear-gradient(45deg, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
+			-webkit-background-clip: text;
+			background-clip: text;
+			animation: shine 2s infinite linear;
+			margin-bottom: 2rem;
+		}
+
+		.loader-bar {
+			width: 200px;
+			height: 2px;
+			background: #333;
+			margin: 0 auto;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.loader-bar::after {
+			content: '';
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 50%;
+			height: 100%;
+			background: #bf953f;
+			animation: load 1.5s infinite ease-in-out;
+		}
+
+		@keyframes shine {
+			0% {
+				background-position: -200%;
+			}
+
+			100% {
+				background-position: 200%;
+			}
+		}
+
+		@keyframes load {
+			0% {
+				left: -50%;
+			}
+
+			100% {
+				left: 100%;
+			}
+		}
+
+		.loaded {
+			opacity: 0;
+			visibility: hidden;
+		}
+
+		/* Hero Hidden State */
+		.hero-hidden {
+			opacity: 0 !important;
+			transform: scale(0.8) translateY(20px);
+			pointer-events: none;
+		}
+
+		/* Ensure transitions are active - POP UP Effect */
+		.hero-content,
+		.topbar {
+			/* Bouncy Bezier for the "Pop" */
+			transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+		}
+	</style>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+	<script type="text/javascript" src="dat.gui.min.js"></script>
+
+</head>
+
+<body>
+
+	<!-- Preloader HTML -->
+	<div id="loader">
+		<div class="loader-content">
+			<h1 class="loader-text">AARAMBH</h1>
+			<div class="loader-bar"></div>
+		</div>
+	</div>
+
+	<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+	<!-- 3D Background Container - Fixed behind content -->
+	<div id="pyramid-container"></div>
+
+	<header class="topbar hero-hidden">
+		<a href="#home" class="brand" aria-label="AARAMBH Home">
+			<div class="logo">E</div>
+			<div>
+				<div class="title">E-Club • Aarambh</div>
+				<div class="subtitle">GITAM Bengaluru</div>
+			</div>
+		</a>
+
+		<nav class="primary" aria-label="Main navigation" id="navMenu">
+			<a href="#home">Home</a>
+			<a href="#events">Events</a>
+			<a href="#sponsors">Sponsors</a>
+			<a href="#speakers">Speakers</a>
+			<a href="#contact">Contact</a>
+			<!--
+			<div class="actions">
+				<button class="btn ghost" aria-label="Login">Login</button><br></br>
+				<button class="btn cta" aria-label="Register">Register</button>
+			</div>
+			-->
+
+		</nav>
+		<button class="menu-toggle" id="menuToggle" aria-label="Toggle menu" aria-expanded="false">
+			<!-- Menu icon (inline SVG) - source: simple menu glyph; icons8 reference: https://icons8.com/icon/dMz54mFbVirR/menu -->
+			<svg width="22" height="22" viewBox="0 0 24 24" fill="none"
+				xmlns="https://icons8.com/icon/vSCcbxMrzsbl/menu" aria-hidden="true" focusable="false">
+				<rect x="3" y="6" width="18" height="2" rx="1" fill="currentColor" />
+				<rect x="3" y="11" width="18" height="2" rx="1" fill="currentColor" />
+				<rect x="3" y="16" width="18" height="2" rx="1" fill="currentColor" />
+			</svg>
+		</button>
+	</header>
+
+	<main>
+		<section class="hero" id="home">
+			<div class="hero-content hero-hidden">
+				<div class="eyebrow">GITAM Bengaluru's 3rd Edition</div>
+				<div class="title-wrap" id="titleWrap">
+					<img src="aarambh-logo.png" alt="AARAMBH" class="hero-logo" id="heroLogo" />
+				</div>
+				<!-- Main 3D Logic -->
+				<!-- Import Map for Three.js -->
+				<script type="importmap">
+					{
+						"imports": {
+							"three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+							"three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+						}
+					}
+				</script>
+
+				<!-- Main 3D Logic -->
+				<script type="module">
+					import * as THREE from 'three';
+					import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+					console.log('Use global "THREE" detection attempt starting...');
+
+					const container = document.getElementById('pyramid-container');
+
+					if (container) {
+						console.log('3D Container #pyramid-container found, initializing Three.js...');
+
+						// Scene setup
+						const scene = new THREE.Scene();
+
+						// Camera
+						const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+						camera.position.z = 5;
+						camera.lookAt(0, 0, 0);
+
+						// Renderer
+						const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+						renderer.setSize(container.clientWidth, container.clientHeight);
+						renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+						container.appendChild(renderer.domElement);
+						console.log('Renderer attached: ', renderer.domElement);
+
+						const ambientLight = new THREE.AmbientLight(0xffffff, 2.0); // High visibility
+						scene.add(ambientLight);
+
+						// V19: Grey Ground for Shadow Definition
+						const hemiLight = new THREE.HemisphereLight(0xffeeb1, 0x444444, 4);
+						hemiLight.position.set(0, 20, 0);
+						scene.add(hemiLight);
+
+						// Main Key Light (Front-Right) - GOLD
+						const directionalLight = new THREE.DirectionalLight(0xffd700, 6);
+						directionalLight.position.set(10, 10, 10);
+						scene.add(directionalLight);
+
+						// Fill Light (Front-Left) - WARM GOLD
+						const fillLight = new THREE.DirectionalLight(0xffaa00, 2);
+						fillLight.position.set(-10, 10, 10);
+						scene.add(fillLight);
+
+						// Top Light (Hero Page Focus) - GOLD
+						const topLight = new THREE.DirectionalLight(0xffd700, 5);
+						topLight.position.set(0, 15, 0);
+						scene.add(topLight);
+
+						// LEFT Light (V22) - GOLD
+						const leftLight = new THREE.DirectionalLight(0xffd700, 5);
+						leftLight.position.set(-15, 5, 0);
+						scene.add(leftLight);
+
+						// FRONT DIRECT Light (V24) - GOLD (Reduced Intensity, Moved Left-Front)
+						const frontDirectLight = new THREE.DirectionalLight(0xffd700, 3);
+						frontDirectLight.position.set(-5, 0, 10);
+						scene.add(frontDirectLight);
+
+						// V20: Back Light (Directional) - User Request
+						const backLight = new THREE.DirectionalLight(0xffd700, 5);
+						backLight.position.set(0, 5, -10);
+						scene.add(backLight);
+
+						// Inner Gold Glow (Center of Model)
+						const pointLight = new THREE.PointLight(0xffd700, 300, 100);
+						pointLight.position.set(0, -1, 0);
+						scene.add(pointLight);
+
+						// Rim Light (Backlight) - Massive White Halo for Silhouette (V19)
+						const rimLight = new THREE.PointLight(0xffffff, 500, 100);
+						rimLight.position.set(0, 0, -3);
+						scene.add(rimLight);
+
+						// Specular "Shine" Light (Close Front-Right) - Forces highlights
+						const shineLight = new THREE.PointLight(0xffd700, 10, 50);
+						shineLight.position.set(5, 5, 5);
+						scene.add(shineLight);
+
+						// Camera Flash Light (Direct Front) - Ensures visibility always
+						const cameraLight = new THREE.PointLight(0xffd700, 5, 20);
+						cameraLight.position.set(0, 2, 5);
+						scene.add(cameraLight);
+
+						// Mouse interaction variables
+						let mouseX = 0;
+						let mouseY = 0;
+						let targetRotationX = 0;
+						let targetRotationY = 0;
+
+						const windowHalfX = window.innerWidth / 2;
+						const windowHalfY = window.innerHeight / 2;
+
+						document.addEventListener('mousemove', (event) => {
+							mouseX = (event.clientX - windowHalfX) * 0.001;
+							mouseY = (event.clientY - windowHalfY) * 0.001;
+						});
+
+						// Load Model
+						const loader = new GLTFLoader();
+						let model;
+						let mixer; // Animation Mixer
+						let modelActions = []; // Store actions for scrubbing
+						const clock = new THREE.Clock(); // Clock for animation timing
+
+						// Loading State Variables
+						let isModelLoaded = false;
+						let isPageLoaded = false;
+						let gameStarted = false;
+
+						// Function to check if everything is ready
+						const checkLoad = () => {
+							if (isModelLoaded && isPageLoaded) {
+								console.log('All Assets Loaded. Starting Experience.');
+								// Add small delay for dramatic effect
+								setTimeout(() => {
+									const loaderEl = document.getElementById('loader');
+									if (loaderEl) loaderEl.classList.add('loaded');
+
+									// Start Game/Intro
+									setTimeout(() => {
+										gameStarted = true;
+
+										// SPLAT! Trigger fluid bursts so the bg is alive when revealed
+										if (typeof multipleSplats === 'function') {
+											multipleSplats(5);
+										}
+
+										// Reveal Hero Content after 3 seconds (wait for finish)
+										setTimeout(() => {
+											const hiddenElements = document.querySelectorAll('.hero-hidden');
+											hiddenElements.forEach(el => el.classList.remove('hero-hidden'));
+
+											// Start Logo Pop Up (Synchronized or slightly delayed?)
+											// Let's pop it instantly with the text reveal
+											const logo = document.getElementById('heroLogo');
+											if (logo) logo.classList.remove('pop-hidden');
+										}, 3000);
+
+									}, 800); // Wait for loader fade out
+								}, 500);
+							}
+						};
+
+						// Window Load (Fluid Sim + DOM)
+						window.addEventListener('load', () => {
+							console.log('Page/Fluid Sim Loaded');
+							isPageLoaded = true;
+							checkLoad();
+						});
+
+						// Scroll Transition Variables
+						const aboutSection = document.getElementById('about');
+						const aboutTarget = document.getElementById('about-3d-target');
+						let scrollY = window.scrollY;
+
+						window.addEventListener('scroll', () => {
+							scrollY = window.scrollY;
+						});
+
+						console.log('Attempting to load dark_tesseract.glb...');
+
+						loader.load('dark_tesseract.glb', (gltf) => {
+							console.log('Model loaded successfully!');
+							model = gltf.scene;
+
+							// MATERIAL POLISH (V16)
+							// Force high reflectivity to catch the gold light
+							model.traverse((child) => {
+								if (child.isMesh) {
+									child.material.metalness = 1.0;
+									child.material.roughness = 0.25; // Spreads the gold wash (was 0.15)
+									child.material.needsUpdate = true;
+								}
+							});
+
+							// Setup Animation Mixer
+							if (gltf.animations && gltf.animations.length > 0) {
+								mixer = new THREE.AnimationMixer(model);
+								gltf.animations.forEach((clip) => {
+									const action = mixer.clipAction(clip);
+									action.play();
+									action.paused = true; // Pause so we can scrub manually
+									modelActions.push(action);
+								});
+								console.log(`Animations loaded for scrubbing: ${gltf.animations.length}`);
+							}
+
+							// Initial Scale and Position (Hero State)
+							// Scale: 1.8 (Desktop) / 1.1 (Mobile), Pos: (0, 0.0, 0)
+							const initialScale = window.innerWidth < 700 ? 1.1 : 1.8;
+							model.scale.set(initialScale, initialScale, initialScale);
+							model.position.set(0, 0.0, 0);
+
+							scene.add(model);
+
+							// Initial rotation - Center View (V22)
+							model.rotation.y = Math.PI / 2;
+							model.rotation.x = 0;
+
+							// Mark Model as Loaded
+							isModelLoaded = true;
+							checkLoad();
+
+						}, (xhr) => {
+							// Progress
+						}, (error) => {
+							console.error('An error occurred loading the model:', error);
+						});
+
+						// Animation Loop
+						let introProgress = 0;
+						let hasIntroStarted = false;
+
+						const animate = () => {
+							requestAnimationFrame(animate);
+
+							if (model) {
+								// Only start intro once the loader is finished (gameStarted)
+								if (gameStarted && !hasIntroStarted) hasIntroStarted = true;
+
+								// Intro Animation: Smoothly ramp up from 0 to 1
+								if (hasIntroStarted && introProgress < 1) {
+									introProgress += 0.008; // Adjust speed of entry
+									if (introProgress > 1) introProgress = 1;
+								}
+
+								// Smooth Easing for Intro
+								const introEase = 1 - Math.pow(1 - introProgress, 3); // easeOutCubic
+
+								targetRotationX = mouseY * 0.5;
+								targetRotationY = mouseX * 0.5;
+
+								// Smooth Scroll Transition Logic
+								// Calculate progress 't' based on scroll
+								const heroHeight = window.innerHeight;
+								const aboutStart = aboutSection ? aboutSection.offsetTop - (window.innerHeight * 0.5) : heroHeight * 0.8;
+								// The 'end' of the about interaction is where we want it to sit fixed
+								const transitionEnd = aboutSection ? aboutSection.offsetTop : heroHeight;
+								const aboutSectionHeight = aboutSection ? aboutSection.offsetHeight : 800;
+								const exitStart = transitionEnd + aboutSectionHeight * 0.5; // Start moving away halfway through about
+
+								// Transition 1: Hero -> About (t goes 0 -> 1)
+								const transitionStart = heroHeight * 0.1; // Start simpler
+								let t = (scrollY - transitionStart) / (transitionEnd - transitionStart);
+								t = Math.max(0, Math.min(1, t)); // clamp
+								t = t * t * (3 - 2 * t); // smoothstep
+
+								// SCRUB MODEL ANIMATION based on 't' (0 to 1)
+								if (mixer && modelActions.length > 0) {
+									modelActions.forEach(action => {
+										const duration = action.getClip().duration;
+										action.time = t * duration;
+									});
+									mixer.update(0); // Force update to apply time change
+								}
+
+								// --- STATE 1: HERO (t=0) ---
+								const isMobile = window.innerWidth < 700;
+								const startScale = isMobile ? 1.1 : 1.8;
+								const startPos = new THREE.Vector3(0, 0.0, 0);
+								// Default View: Center (V22)
+								const startRotY = Math.PI / 2;
+
+								// --- STATE 2: ABOUT (t=1) ---
+								const endScale = isMobile ? 0.6 : 1.0;
+								// Adjusted X to 2.8 to sit clearly beside text (Desktop)
+								// On Mobile, keep it centered or move slightly up/down? Let's keep it centered (x=0) or move less.
+								const endPos = isMobile ? new THREE.Vector3(0, 0.2, 0) : new THREE.Vector3(2.8, 0.5, 0);
+								const endRotY = Math.PI / 2 + Math.PI; // Spin 180 deg
+
+								// Interpolate
+								let currentScale = startScale + (endScale - startScale) * t;
+								// Apple Intro Scale on top -- REMOVED
+								// currentScale *= introEase; 
+
+
+								model.scale.set(currentScale, currentScale, currentScale);
+
+								let currentPosX = startPos.x + (endPos.x - startPos.x) * t;
+								let currentPosY = startPos.y + (endPos.y - startPos.y) * t;
+								let currentPosZ = startPos.z + (endPos.z - startPos.z) * t;
+
+								// --- STATE 3: SCROLL AWAY (Exit) ---
+								// If we scroll past the "About" lock point, move the model UP
+								// so it looks like it scrolls with the page content
+								if (scrollY > transitionEnd) {
+									// Calculate pixel distance scrolled past the lock point
+									const scrollDelta = scrollY - transitionEnd;
+									// Convert pixels to 3D units (approximate, depends on camera Z)
+									// At z=0 and camera.z=5, 1 unit approx 130px? Tuned manually.
+									// We want it to move up (positive Y) or down?
+									// As we scroll down, page moves up. So model should move up (pos Y) 
+									// BUT Three.js Y is up. To scroll "up" with page, visual Y must increase 
+									// relative to camera if camera is fixed?
+									// No, camera is fixed. Content moves UP. Model must move UP.
+									// So we ADD to Y.
+
+									// However, we want it to stay PINNED to the SECTION.
+									// If the section moves up, the model should move up (Y increases).
+									// Wait, regular DOM elements move UP (negative Y in screen space).
+									// In 3D logic: +Y is Up.
+									// If we want it to leave the screen top, we add to Y.
+									const moveUpUnits = scrollDelta * 0.012;
+									currentPosY += moveUpUnits;
+								}
+
+								model.position.set(currentPosX, currentPosY, currentPosZ);
+
+								// Rotation Logic
+								const interpolatedBaseRotY = startRotY + (endRotY - startRotY) * t;
+
+								// Intro Spin effect (add extra rotations during intro)
+								// V5: Uni-directional spin. We want it to "arrive" at the resting angle.
+								// Using negative offset that decays to 0 ensures it spins "in" from one side.
+								// V7: Reduced spin amount from 2*PI to PI (180 deg) per user request.
+								const introSpin = -(1 - introEase) * Math.PI;
+
+								// Perspective Correction: TIlt disabled for Original View (V23)
+								// const perspectiveTilt = currentPosY * 0.15;
+								// V23: Removed +0.3 bias. Target X is just mouse input (or 0).
+								const targetX = targetRotationX;
+
+								const mouseCompX = 0.05 * (targetX - model.rotation.x);
+
+								// Disable mouse influence on Y during intro for cleaner spin
+								// V6: Strict lock. Mouse only works AFTER intro is 100% done (stops at centre).
+								const mouseFactorY = introProgress >= 1 ? 0.5 : 0;
+								const mouseCompY = 0.1 * (interpolatedBaseRotY + (mouseX * mouseFactorY) - model.rotation.y);
+
+								model.rotation.x += mouseCompX;
+
+								// CLAMP ROTATION X (Limit bottom view)
+								// Allow positive rotation (looking "down" relative to inverted Y)
+								// Adjusted max to 1.2 to allow the +0.3 bias
+								model.rotation.x = Math.max(-0.2, Math.min(1.2, model.rotation.x));
+
+								// V6: Increased damping from 0.05 to 0.1 for tighter control (less rubber-banding)
+								// RE-DOING ROTATION Y LOGIC for V5 Cleanliness:
+								const targetYTotal = interpolatedBaseRotY + (mouseX * mouseFactorY) + introSpin;
+								// Damping 0.1 for tighter follow
+								model.rotation.y += 0.1 * (targetYTotal - model.rotation.y);
+
+								// Opacity/Visibility
+								// Only fade out if it goes way off screen to save GPU
+								if (scrollY > exitStart + 1000) {
+									renderer.domElement.style.opacity = '0';
+								} else {
+									renderer.domElement.style.opacity = '1';
+								}
+							}
+
+							renderer.render(scene, camera);
+						};
+
+						animate();
+						console.log('Animation loop started');
+
+						// Handle resize
+						window.addEventListener('resize', () => {
+							if (container) {
+								camera.aspect = container.clientWidth / container.clientHeight;
+								camera.updateProjectionMatrix();
+								renderer.setSize(container.clientWidth, container.clientHeight);
+							}
+						});
+					} else {
+						console.error('3D Container #pyramid-container NOT found!');
+						// alert('Error: #pyramid-container div is missing from HTML'); // Suppress alert
+					}
+				</script>
+				<div class="hero-subtitle">Entrepreneurship • Innovation • Tech</div>
+
+				<div class="meta-row">
+					<div class="date-pill"><span class="dot" aria-hidden="true"></span><span
+							style="font-weight:700">MARCH 2026</span></div>
+				</div>
+
+
+			</div>
+		</section>
+
+		<!-- ABOUT -->
+		<section class="section about" id="about">
+			<div class="text">
+				<h3 class="section-title">About AARAMBH</h3>
+				<p>AARAMBH is the flagship entrepreneurship and innovation event organised by the E-Club of GITAM Bengaluru. It is a celebration of startups, technology, design, and creative problem solving, dedicated to students, faculty, founders, and innovators who want to build, pitch, and collaborate.</p>
+				<p>The event includes workshops, pitch competitions, speaker sessions, and hands-on problem-solving activities that foster entrepreneurship and real-world product thinking.</p>
+			</div>
+			<!-- Target container for 3D model to align with -->
+			<div id="about-3d-target" class="aside"></div>
+		</section>
+
+		<!-- GALLERY -->
+		<section class="section gallery" id="gallery">
+			<h3 class="section-title">GALLERY</h3>
+
+			<div class="marquee-wrapper">
+				<!-- Marquee 1: moves left -->
+				<div class="marquee marquee-1" aria-hidden="false">
+					<div class="marquee-row">
+						<div class="marquee-track">
+							<img src="M1.jpg" alt="M1">
+							<img src="M2.jpg" alt="M2">
+							<img src="M3.jpg" alt="M3">
+							<img src="M4.jpg" alt="M4">
+							<img src="M5.jpg" alt="M5">
+							<!-- duplicate for seamless scroll -->
+							<img src="M1.jpg" alt="M1">
+							<img src="M2.jpg" alt="M2">
+							<img src="M3.jpg" alt="M3">
+							<img src="M4.jpg" alt="M4">
+							<img src="M5.jpg" alt="M5">
+						</div>
+					</div>
+				</div>
+
+				<!-- Marquee 2: moves right -->
+				<div class="marquee marquee-2" aria-hidden="false">
+					<div class="marquee-row">
+						<div class="marquee-track">
+							<img src="M6.jpg" alt="M6">
+							<img src="M7.jpg" alt="M7">
+							<img src="M8.jpg" alt="M8">
+							<img src="M9.jpg" alt="M9">
+							<img src="M5.jpg" alt="M5">
+							<!-- duplicate for seamless scroll -->
+							<img src="M6.jpg" alt="M6">
+							<img src="M7.jpg" alt="M7">
+							<img src="M8.jpg" alt="M8">
+							<img src="M9.jpg" alt="M9">
+							<img src="M5.jpg" alt="M5">
+						</div>
+					</div>
+				</div>
+
+				<!-- Marquee 3: moves left -->
+				<div class="marquee marquee-3" aria-hidden="false">
+					<div class="marquee-row">
+						<div class="marquee-track">
+							<img src="M9.jpg" alt="M9">
+							<img src="M8.jpg" alt="M8">
+							<img src="M7.jpg" alt="M7">
+							<img src="M6.jpg" alt="M6">
+							<img src="M5.jpg" alt="M5">
+							<!-- duplicate for seamless scroll -->
+							<img src="M9.jpg" alt="M9">
+							<img src="M8.jpg" alt="M8">
+							<img src="M7.jpg" alt="M7">
+							<img src="M6.jpg" alt="M6">
+							<img src="M5.jpg" alt="M5">
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- STATS / PARTICIPANTS -->
+		<section class="section stats" id="stats">
+			<h3 class="section-title">Aarambh Overview Through the Year</h3>
+			<div class="stats-grid">
+				<div class="stat-block">
+					<div class="heading" data-to="12000" data-suffix="+">12000+</div>
+					<div class="text">
+						ATTENDEES
+					</div>
+				</div>
+				<div class="stat-block stat-block-2">
+					<div class="heading" data-to="3000" data-suffix="+">3000+</div>
+					<div class="text">
+						PARTICIPANTS
+					</div>
+				</div>
+				<div class="stat-block stat-block-3">
+					<div class="heading" data-to="30" data-suffix="+">30+</div>
+					<div class="text">
+						PARTNERS
+					</div>
+				</div>
+
+				<div class="stat-block stat-block-3">
+					<div class="heading" data-to="100" data-suffix="+">100+</div>
+					<div class="text">
+						STARTUP IDEAS
+					</div>
+				</div>
+			</div>
+			</div>
+		</section>
+		<section class="section" id="events">
+			<h3 class="section-title">EVENTS</h3>
+			<div class="events-grid">
+				<div class="event-card" role="button" tabindex="0" aria-label="AI Build Fest event">
+					<div class="card-inner">
+						<div class="card-front">
+							<img src="Pich-Tank.png" alt="Pitch Tank" class="event-photo">
+
+						</div>
+						<div class="card-back">
+							<p class="event-description">Department-wise Idea Pitching. A platform for students (CSE,
+								Core, Management, Science) and Faculty to pitch innovative solutions. Themes include
+								Smart Cities, AI for Good, MedTech, and more.
+							</p>
+							<div class="event-actions"><a class="btn cta" href="event-pitch-tank.html">Register</a>
+								<a class="btn-outline-sm" href="event-pitch-tank.html" target="_blank"
+									rel="noopener">More Info.</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="event-card" role="button" tabindex="0" aria-label="Battle of Brains event">
+					<div class="card-inner">
+						<div class="card-front">
+							<img src="Battle-of-Brains.png" alt="Battle of Brains" class="event-photo">
+
+						</div>
+						<div class="card-back">
+							<!-- TODO: Update Description for Battle of Brains -->
+							<p class="event-description">A time-bound innovation challenge. Teams analysis a surprise
+								problem statement, identify the root cause, and pitch a practical solution—all within 3
+								hours. Think fast, solve faster.
+							</p>
+							<div class="event-actions"><a class="btn cta" href="https://forms.gle/8Yv47oHPY6i3s8LE9"
+									target="_blank">Register</a><a class="btn-outline-sm"
+									href="event-battle-of-brains.html" target="_blank" rel="noopener">More Info.</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="event-card" role="button" tabindex="0" aria-label="Innovation In House event">
+					<div class="card-inner">
+						<div class="card-front">
+							<img src="Innovation-In-house.png" alt="Innovation In House" class="event-photo">
+
+						</div>
+						<div class="card-back">
+							<!-- TODO: Update Description for Innovation In House -->
+							<p class="event-description">A showcase of innovation. Students present academic projects
+								(Minor, Major, TEPE), prototypes, and research work to faculty and experts. Categories
+								include Student Projects, Faculty Research, and Open Innovation.
+							</p>
+							<div class="event-actions"><a class="btn cta" href="https://forms.gle/ATQQTX9kHBaH7u9x6"
+									target="_blank">Register</a>
+								<a class="btn-outline-sm" href="event-innovation-in-house.html" target="_blank"
+									rel="noopener">More Info.</a>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="event-card" role="button" tabindex="0" aria-label="Leaders In Origin event">
+					<div class="card-inner">
+						<div class="card-front">
+							<img src="Leaders-In-origin.png" alt="Leaders In Origin" class="event-photo">
+
+						</div>
+						<div class="card-back">
+							<!-- TODO: Update Description for Leaders In Origin -->
+							<p class="event-description">"Leadership is defined by decisions." A solo leadership
+								simulation testing critical thinking, ethics, and decision-making under pressure. Solve
+								complex scenarios and prove your mettle.
+							</p>
+							<div class="event-actions"><a class="btn cta" href="https://forms.gle/q5bo7LNmtXhLZXjCA"
+									target="_blank">Register</a>
+								<a class="btn-outline-sm" href="event-leaders-in-origin.html" target="_blank"
+									rel="noopener">More Info.</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			</div>
+			</div>
+		</section>
+
+		<!-- SPEAKERS -->
+		<section class="section" id="speakers">
+			<div class="speakers-track" id="speakersTrack">
+				<div class="speakers-sticky">
+					<div class="speakers-deck" id="speakersDeck">
+						<h3 class="section-title">PREVIOUS SPEAKERS</h3>
+
+						<!-- Speaker 1 -->
+						<div class="speaker-card">
+							<img src="Speaker1.jpg" alt="Speaker 1">
+							<div class="speaker-info">
+								<h4>Prasanna Lohar</h4>
+								<p>CEO Block stack</p>
+							</div>
+						</div>
+
+						<!-- Speaker 2 -->
+						<div class="speaker-card">
+							<img src="Speaker2.jpg" alt="Speaker 2">
+							<div class="speaker-info">
+								<h4>Vinay Agastya</h4>
+								<p>CEO & Founder at Ctruh</p>
+							</div>
+						</div>
+
+						<!-- Speaker 3 -->
+						<div class="speaker-card">
+							<img src="Speaker3.jpg" alt="Speaker 3">
+							<div class="speaker-info">
+								<h4>Sai Krishna V K</h4>
+								<p>CO -FOUNDER - HOUSE
+									OF MODELS</p>
+							</div>
+						</div>
+
+						<!-- Speaker 4 -->
+						<div class="speaker-card">
+							<img src="Speaker4.jpg" alt="Speaker 4">
+							<div class="speaker-info">
+								<h4>Prof. Greg Collier</h4>
+								<p>Director of International
+									Program, NUCEE</p>
+							</div>
+						</div>
+
+						<!-- Speaker 5 -->
+						<div class="speaker-card">
+							<img src="Speaker5.png" alt="Speaker 5">
+							<div class="speaker-info">
+								<h4> Shilpa Gupta </h4>
+								<p> Founder & CIO at
+									Iravati Wealth</p>
+							</div>
+						</div>
+
+						<!-- Speaker 6 -->
+						<div class="speaker-card">
+							<img src="Speaker6.jpg" alt="Speaker 5">
+							<div class="speaker-info">
+								<h4>Anupam Kumar</h4>
+								<p>CEO Minimines</p>
+							</div>
+						</div>
+
+						<!-- Speaker 8 -->
+						<div class="speaker-card">
+							<img src="Speaker8.png" alt="Speaker 5">
+							<div class="speaker-info">
+								<h4>Goutam Surana</h4>
+								<p>Founder Eco365</p>
+							</div>
+						</div>
+
+
+						<!-- Speaker 9 -->
+						<div class="speaker-card">
+							<img src="Speaker9.png" alt="Speaker 5">
+							<div class="speaker-info">
+								<h4>Ravi Ramamurt</h4>
+								<p>Director of
+									Northeastern University</p>
+							</div>
+						</div>
+
+
+						<!-- Speaker 7 -->
+						<div class="speaker-card">
+							<img src="Speaker7.png" alt="Speaker 5">
+							<div class="speaker-info">
+								<h4>Srinivas Raju</h4>
+								<p>CEO Pi Square
+									Technologies</p>
+							</div>
+						</div>
+
+						<!-- Speaker 9 -->
+						<div class="speaker-card">
+							<img src="Speaker10.png" alt="Speaker 5">
+							<div class="speaker-info">
+								<h4>Rama Kandula</h4>
+								<p>Co-Founder &
+									CEO Misochain</p>
+							</div>
+						</div>
+
+
+					</div>
+				</div>
+			</div>
+
+
+			<!-- Footer -->
+			<!-- SPONSORS -->
+			<!--
+						<section class="section" id="sponsors">
+							<h3 class="section-title">SPONSORS</h3>
+							<!-- Swiper -->
+			<!--
+							<div class="swiper sponsors-swiper">
+								<div class="swiper-wrapper">
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">GOOGLE</div>
+											<div class="sponsor-tier">Title Sponsor</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">MICROSOFT</div>
+											<div class="sponsor-tier">Platinum Sponsor</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">ADOBE</div>
+											<div class="sponsor-tier">Gold Sponsor</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">AMAZON</div>
+											<div class="sponsor-tier">Cloud Partner</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">INTEL</div>
+											<div class="sponsor-tier">Tech Partner</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">NVIDIA</div>
+											<div class="sponsor-tier">AI Partner</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">IBM</div>
+											<div class="sponsor-tier">Innovation Partner</div>
+										</div>
+									</div>
+									<!-- Duplicates for Loop Symmetry -->
+			<!--
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">GOOGLE</div>
+											<div class="sponsor-tier">Title Sponsor</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">MICROSOFT</div>
+											<div class="sponsor-tier">Platinum Sponsor</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">ADOBE</div>
+											<div class="sponsor-tier">Gold Sponsor</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">AMAZON</div>
+											<div class="sponsor-tier">Cloud Partner</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">INTEL</div>
+											<div class="sponsor-tier">Tech Partner</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">NVIDIA</div>
+											<div class="sponsor-tier">AI Partner</div>
+										</div>
+									</div>
+									<div class="swiper-slide">
+										<div class="sponsor-card">
+											<div class="sponsor-logo">IBM</div>
+											<div class="sponsor-tier">Innovation Partner</div>
+										</div>
+									</div>
+								</div>
+								<div class="swiper-pagination"></div>
+								<!-- Navigation Arrows -->
+			<!--
+								<div class="swiper-button-prev"></div>
+								<div class="swiper-button-next"></div>
+							</div>
+						</section>
+					-->
+
+			<!-- FOOTER -->
+			<!-- FOOTER -->
+
+	</main>
+	<!-- FOOTER -->
+	<footer class="sitefoot">
+		<div class="footer-content">
+			<div class="footer-section footer-brand">
+				<div class="footer-logo">E</div>
+				<div>
+					<h4>THE ENTREPRENEUR'S CLUB</h4>
+					<p class="footer-subtitle">GITAM Bengaluru</p>
+					<p class="footer-desc">Unleash Your Enterpreneurial Spirit<br><br>E-Club is a student-driven club promoting the entrepreneurship ecosystem on campus.</p>
+				</div>
+			</div>
+
+			<div class="footer-section">
+				<h5>QUICK LINKS</h5>
+				<ul class="footer-links">
+					<li><a href="#home">Home</a></li>
+					<li><a href="#events">Events</a></li>
+					<li><a href="https://smartideathon.gitam.edu/" target="_blank">SmartIDEathon</a></li>
+					<li><a href="https://www.gitam.edu/vdc" target="_blank">VDC</a></li>
+					<li><a href="https://www.gitam.edu/makerspace" target="_blank">MakerSpace</a></li>
+				</ul>
+			</div>
+
+			<div class="footer-section">
+				<h5>REACH US</h5>
+				<p class="footer-text"><strong>ENTREPRENEUR'S CLUB,</strong><br>Venture Development Centre
+					(VDC),<br>GITAM (DEEMED TO BE UNIVERSITY) University ,<br>Bengaluru, Karnataka</p>
+			</div>
+
+			<div class="footer-section">
+				<h5>FOLLOW US</h5>
+				<div class="social-links">
+					<a href="https://www.linkedin.com/in/entrepreneur-s-club-bengaluru/" aria-label="LinkedIn"
+						target="_blank"><i class="fab fa-linkedin"></i></a>
+					<a href="https://www.instagram.com/eclub_gitamblr?igsh=emRzNHpnaHRtY2V0" aria-label="Instagram"
+						target="_blank"><i class="fab fa-instagram"></i></a>
+				</div>
+				<br>
+				<h5>CONTACT</h5>
+				<div class="contact-item">
+					<a href="mailto:eclub_blr@gitam.in">eclub_blr@gitam.in</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="footer-bottom">
+			<p>© 2026 AARAMBH, E-Club GITAM Bengaluru. All rights reserved.</p>
+		</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.36/bundled/lenis.min.js" defer></script>
+	<script src="animations.js" defer></script>
+	<script src="script.js" defer></script>
+
+	<script src="Aarambh.js" defer></script>
+</body>
+
+</html>
